@@ -5,3 +5,7 @@ spring:
   mail:
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
+
+payment:
+  toss:
+    secret: ${TOSS_SECRET_KEY}
