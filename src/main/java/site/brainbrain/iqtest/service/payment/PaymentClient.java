@@ -3,8 +3,7 @@ package site.brainbrain.iqtest.service.payment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -20,24 +19,21 @@ import site.brainbrain.iqtest.service.payment.dto.ApiConfirmResponse;
 import site.brainbrain.iqtest.service.payment.dto.ApiErrorResponse;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Component
 public class PaymentClient {
 
-    private static final String AUTHORIZATION_VALUE = "BASIC %s";
-    private static final URI CONFIRM_API_URI = URI.create("https://api.tosspayments.com/v1/payments/confirm");
-
     @Value("${payment.toss.secret}")
-    private String API_SECRET_KEY;
+    private String apiSecretKey;
 
     private final RestClient restClient;
-    private final CredentialCodec credentialCodec;
+    private final AuthGenerator authGenerator;
 
     public ApiConfirmResponse confirm(final ApiConfirmRequest apiConfirmRequest) {
-        final String encodedKey = credentialCodec.encodeBase64(API_SECRET_KEY);
+        final String encodedKey = authGenerator.encodeBase64(apiSecretKey);
         return restClient.post()
-                .uri(CONFIRM_API_URI)
-                .header(HttpHeaders.AUTHORIZATION, String.format(AUTHORIZATION_VALUE, encodedKey))
+                .uri(PaymentApiUri.CONFIRM.getUri())
+                .header(HttpHeaders.AUTHORIZATION, authGenerator.buildBasicAuthHeader(encodedKey))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(apiConfirmRequest)
                 .retrieve()
@@ -45,7 +41,6 @@ public class PaymentClient {
                         (request, response) -> handleError(response)
                 )
                 .body(ApiConfirmResponse.class);
-
     }
 
     private void handleError(final ClientHttpResponse response) {

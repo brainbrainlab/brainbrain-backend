@@ -2,7 +2,7 @@ package site.brainbrain.iqtest.service.payment;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
 import site.brainbrain.iqtest.domain.Payment;
 import site.brainbrain.iqtest.repository.PaymentRepository;
@@ -10,7 +10,7 @@ import site.brainbrain.iqtest.service.payment.dto.ApiConfirmRequest;
 import site.brainbrain.iqtest.service.payment.dto.ApiConfirmResponse;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class PaymentService {
 
     private final PaymentClient paymentClient;
@@ -35,16 +35,5 @@ public class PaymentService {
                 confirm.requestedAt(),
                 false
         );
-    }
-
-    // todo: 환불 - 주문번호를 고객이 알고있어야 환불을 해줄 수 있음.
-    @Transactional
-    public void refund() {
-
-    }
-
-    // todo: 결제 내역 조회
-    public void view() {
-
     }
 }
