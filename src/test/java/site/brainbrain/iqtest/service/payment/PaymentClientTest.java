@@ -20,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.MockRestServiceServer;
 import site.brainbrain.iqtest.config.PaymentClientConfig;
 import site.brainbrain.iqtest.exception.PaymentClientException;
@@ -28,7 +27,6 @@ import site.brainbrain.iqtest.exception.PaymentServerException;
 import site.brainbrain.iqtest.service.payment.dto.ApiConfirmRequest;
 import site.brainbrain.iqtest.service.payment.dto.ApiErrorResponse;
 
-@ActiveProfiles("test")
 @RestClientTest({PaymentClient.class, PaymentClientConfig.class, AuthGenerator.class})
 class PaymentClientTest {
 
