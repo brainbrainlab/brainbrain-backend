@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 public record ApiConfirmResponse(
         String orderId,
         String orderName,
-        String amount,
+        int amount,
         String paymentKey,
         OffsetDateTime requestedAt
 ) {

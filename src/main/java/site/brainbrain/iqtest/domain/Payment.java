@@ -20,7 +20,7 @@ public class Payment {
     private String orderName;
 
     @Column(name = "amount")
-    private String amount;
+    private int amount;
 
     @Column(name = "payment_key", unique = true)
     private String paymentKey;
@@ -32,7 +32,7 @@ public class Payment {
     private boolean isCanceled;
 
 
-    public Payment(final String orderId, final String orderName, final String amount, final String paymentKey,
+    public Payment(final String orderId, final String orderName, final int amount, final String paymentKey,
                    final OffsetDateTime requestedAt, final boolean isCanceled) {
         this.orderId = orderId;
         this.orderName = orderName;
