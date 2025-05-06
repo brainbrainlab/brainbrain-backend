@@ -23,6 +23,8 @@ import site.brainbrain.iqtest.service.payment.dto.ApiErrorResponse;
 @Component
 public class PaymentClient {
 
+    public static final String PAYMENT_CONFIRM = "/v1/payments/confirm";
+
     @Value("${payment.toss.secret}")
     private String apiSecretKey;
 
@@ -32,7 +34,7 @@ public class PaymentClient {
     public ApiConfirmResponse confirm(final ApiConfirmRequest apiConfirmRequest) {
         final String encodedKey = authGenerator.encodeBase64(apiSecretKey);
         return restClient.post()
-                .uri(PaymentApiUri.CONFIRM.getUri())
+                .uri(PAYMENT_CONFIRM)
                 .header(HttpHeaders.AUTHORIZATION, authGenerator.buildBasicAuthHeader(encodedKey))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(apiConfirmRequest)

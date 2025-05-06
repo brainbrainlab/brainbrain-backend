@@ -59,7 +59,7 @@ class PaymentClientTest {
     @DisplayName("결제 승인에 성공한다.")
     void paymentConfirm_success() {
         // given
-        final String endpoint = makeEndpoint(PaymentApiUri.CONFIRM);
+        final String endpoint = makeEndpoint(PaymentClient.PAYMENT_CONFIRM);
         final String encodedKey = authGenerator.encodeBase64(apiSecretKey);
         mockServer.expect(requestTo(endpoint))
                 .andExpect(method(HttpMethod.POST))
@@ -76,7 +76,7 @@ class PaymentClientTest {
     @DisplayName("결제 승인에 실패하여 4XX 에러를 응답하면 Client 커스텀 예외를 던진다.")
     void paymentConfirm_fail_4xx() throws JsonProcessingException {
         // given
-        final String endpoint = makeEndpoint(PaymentApiUri.CONFIRM);
+        final String endpoint = makeEndpoint(PaymentClient.PAYMENT_CONFIRM);
         final String encodedKey = authGenerator.encodeBase64(apiSecretKey);
         final ApiErrorResponse response = new ApiErrorResponse("NOT_FOUND_PAYMENT_SESSION", "결제 시간이 만료되어 결제 진행 데이터가 존재하지 않습니다.");
         mockServer.expect(requestTo(endpoint))
@@ -94,7 +94,7 @@ class PaymentClientTest {
     @DisplayName("결제 승인에 실패하여 5XX 에러를 응답하면 Server 커스텀 예외를 던진다.")
     void paymentConfirm_fail_5xx() throws JsonProcessingException {
         // given
-        final String endpoint = makeEndpoint(PaymentApiUri.CONFIRM);
+        final String endpoint = makeEndpoint(PaymentClient.PAYMENT_CONFIRM);
         final String encodedKey = authGenerator.encodeBase64(apiSecretKey);
         final ApiErrorResponse response = new ApiErrorResponse("FAILED_PAYMENT_INTERNAL_SYSTEM_PROCESSING", "결제가 완료되지 않았어요. 다시 시도해주세요.");
         mockServer.expect(requestTo(endpoint))
@@ -108,7 +108,7 @@ class PaymentClientTest {
         assertThatThrownBy(() -> paymentClient.confirm(REQUEST)).isExactlyInstanceOf(PaymentServerException.class);
     }
 
-    private String makeEndpoint(final PaymentApiUri uri) {
-        return baseUrl + uri.getUri();
+    private String makeEndpoint(final String uri) {
+        return baseUrl + uri;
     }
 }
