@@ -25,8 +25,10 @@ public class ResultController {
     @PostMapping("/")
     public void create(@RequestParam CreateResultRequest request) {
         paymentService.pay(request);
-        scoreService.calculate(request);
-        certificateService.generate(request);
+        Integer score = scoreService.calculate(request);
+        String name = request.name();
+
+        certificateService.generate(name, score);
         emailService.send(request);
     }
 
