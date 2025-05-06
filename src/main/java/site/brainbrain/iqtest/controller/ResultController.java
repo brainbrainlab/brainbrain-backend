@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
 import site.brainbrain.iqtest.service.CertificateService;
 import site.brainbrain.iqtest.service.EmailService;
-import site.brainbrain.iqtest.service.PaymentService;
+import site.brainbrain.iqtest.service.payment.PaymentService;
 import site.brainbrain.iqtest.service.ScoreService;
 
 @RestController
