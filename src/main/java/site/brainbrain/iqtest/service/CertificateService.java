@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CertificateService {
 
+    private static final Color GRAY = new Color(0x666666);
+
     public ByteArrayOutputStream generate(String name, Integer score) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -50,7 +52,7 @@ public class CertificateService {
         PDType0Font dateAndCertFont = PDType0Font.load(doc, gilda);
 
         contentStream.setFont(dateAndCertFont, 13);
-        contentStream.setStrokingColor(Color.GRAY);
+        contentStream.setStrokingColor(GRAY);
         contentStream.newLineAtOffset(134, 142);
         // FIXME 이거 유저의 날짜 정보 가져와야 하나.
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
@@ -72,8 +74,8 @@ public class CertificateService {
         InputStream exmouthFont = getClass().getResourceAsStream("/static/fonts/exmouth_.ttf");
         PDType0Font nameAndScoreFont = PDType0Font.load(doc, exmouthFont);
 
-        // 이름 새기기
         contentStream.setFont(nameAndScoreFont, 70);
+        //FIXME: 색상 미정
         contentStream.setNonStrokingColor(Color.BLACK);
 
         // 페이지의 크기 가져오기
@@ -87,7 +89,7 @@ public class CertificateService {
         float xPosition = (pageWidth - nameWidth) / 2;
 
         contentStream.newLineAtOffset(xPosition, 310);
-        contentStream.showText(name); // 텍스트 추가
+        contentStream.showText(name);
 
         contentStream.endText();
         contentStream.close();
@@ -101,6 +103,7 @@ public class CertificateService {
         PDType0Font nameAndScoreFont = PDType0Font.load(doc, exmouthFont);
 
         contentStream.setFont(nameAndScoreFont, 80);
+        // FIXME 색상 미정
         contentStream.setNonStrokingColor(Color.BLACK);
 
         contentStream.newLineAtOffset(390, 202);
