@@ -6,8 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.OffsetDateTime;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class Payment {
@@ -31,11 +35,11 @@ public class Payment {
     @Column(name = "requested_at")
     private OffsetDateTime requestedAt;
 
-    @Column(name = "is_canceled", nullable = true)
+    @Column(name = "is_canceled")
     private boolean isCanceled;
 
-
-    public Payment(final String orderId, final String orderName, final int amount, final String paymentKey,
+    @Builder
+    private Payment(final String orderId, final String orderName, final int amount, final String paymentKey,
                    final OffsetDateTime requestedAt, final boolean isCanceled) {
         this.orderId = orderId;
         this.orderName = orderName;
