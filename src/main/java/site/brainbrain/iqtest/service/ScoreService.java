@@ -6,6 +6,7 @@ import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
 
 @Service
 public class ScoreService {
-    public void calculate(final CreateResultRequest request) {
+    public Integer calculate(final CreateResultRequest request) {
+        return 100;
     }
 }
