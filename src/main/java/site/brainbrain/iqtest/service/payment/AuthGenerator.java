@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class AuthGenerator {
 
     private static final String CREDENTIAL_BASE64 = "%s:";
-    private static final String BASIC_FORMAT = "BASIC %s";
+    private static final String BASIC_FORMAT = "Basic %s";
 
     public String encodeBase64(final String input) {
         final String credential = String.format(CREDENTIAL_BASE64, input);
