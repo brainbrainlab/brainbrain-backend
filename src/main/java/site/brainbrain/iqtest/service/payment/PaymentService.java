@@ -27,13 +27,13 @@ public class PaymentService {
     }
 
     private Payment createPayment(final String paymentKey, final ApiConfirmResponse confirm) {
-        return new Payment(
-                confirm.orderId(),
-                confirm.orderName(),
-                confirm.amount(),
-                paymentKey,
-                confirm.requestedAt(),
-                false
-        );
+        return Payment.builder()
+                .orderId(confirm.orderId())
+                .orderName(confirm.orderName())
+                .amount(confirm.amount())
+                .paymentKey(paymentKey)
+                .requestedAt(confirm.requestedAt())
+                .isCanceled(false)
+                .build();
     }
 }

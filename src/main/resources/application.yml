@@ -8,4 +8,5 @@ spring:
 
 payment:
   toss:
+    base_url: https://api.tosspayments.com
     secret: ${TOSS_SECRET_KEY}
