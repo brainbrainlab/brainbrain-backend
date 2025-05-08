@@ -13,7 +13,7 @@ public class MailAttachmentConverterTest {
 
     @Test
     @DisplayName("메일 첨부용 리소스로 변환한다.")
-    void toResource() throws IOException {
+    void to_resource() throws IOException {
         // given
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write("test".getBytes());
