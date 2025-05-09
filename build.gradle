@@ -38,6 +38,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// 이메일 전송 테스트
+	testImplementation 'com.icegreen:greenmail-junit5:2.0.1'
 }
 
 tasks.named('test') {
