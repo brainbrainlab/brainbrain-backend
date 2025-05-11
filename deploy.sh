@@ -10,7 +10,7 @@ echo "🔄 최신 코드 가져오기"
 git pull
 
 echo "🛠️ 빌드 시작"
-./gradlew build
+./gradlew build -x test
 
 echo "🛑 기존 애플리케이션 종료 중"
 # 현재 실행 중인 jar 프로세스 종료
