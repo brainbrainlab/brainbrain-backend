@@ -3,10 +3,14 @@ spring:
     name: iqtest
 
   mail:
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${MAIL_USERNAME:tmp_username}
+    password: ${MAIL_PASSWORD:tmp_password}
 
 payment:
   toss:
     base_url: https://api.tosspayments.com
-    secret: ${TOSS_SECRET_KEY}
+    secret: ${TOSS_SECRET_KEY:tmp_secret}
+
+logging:
+  file:
+    path: ${LOG_BASE:/logs}
