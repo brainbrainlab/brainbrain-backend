@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.apache.pdfbox:pdfbox:2.0.24'
+	implementation 'mysql:mysql-connector-java:8.0.28'
 
 	// 이메일 전송
 	implementation 'org.springframework.boot:spring-boot-starter-mail'

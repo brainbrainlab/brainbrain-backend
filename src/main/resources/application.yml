@@ -2,6 +2,20 @@ spring:
   application:
     name: iqtest
 
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+
   mail:
     username: ${MAIL_USERNAME:tmp_username}
     password: ${MAIL_PASSWORD:tmp_password}
