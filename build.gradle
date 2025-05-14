@@ -29,6 +29,10 @@ dependencies {
 	implementation 'org.apache.pdfbox:pdfbox:2.0.24'
 	implementation 'mysql:mysql-connector-java:8.0.28'
 
+	// Rate Limit
+	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
+	implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+
 	// 이메일 전송
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	// PDF 수정
