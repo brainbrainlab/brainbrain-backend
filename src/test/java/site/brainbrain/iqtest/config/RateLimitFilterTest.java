@@ -48,7 +48,7 @@ class RateLimitFilterTest {
 
     @Test
     @DisplayName("허용된 요청 수까지는 200 응답 후 이후 요청은 429 상태코드를 반환한다")
-    void allowUpToLimit() throws Exception {
+    void return_200_when_allow_and_429_when_exceed() throws Exception {
         for (int i = 0; i < MAX_REQUESTS_PER_MINUTE; i++) {
             mockMvc.perform(get(COUPON_ENDPOINT)).andExpect(status().isOk());
         }
@@ -60,7 +60,7 @@ class RateLimitFilterTest {
 
     @Test
     @DisplayName("/coupons 외의 요청은 제한이 걸리지 않는다")
-    void otherUriShouldNotBeRateLimited() throws Exception {
+    void other_request_can_exceed_rate_limit() throws Exception {
         for (int i = 0; i < MAX_REQUESTS_PER_MINUTE + 1; i++) {
             mockMvc.perform(get("/check")).andExpect(status().isOk());
         }
@@ -68,7 +68,7 @@ class RateLimitFilterTest {
 
     @Test
     @DisplayName("각 ip 마다 별도로 요청 제한이 적용된다")
-    void rateLimitIsAppliedPerIp() throws Exception {
+    void rate_limit_per_ip() throws Exception {
         // given
         final String ip1 = "1.1.1.1";
         final String ip2 = "2.2.2.2";
