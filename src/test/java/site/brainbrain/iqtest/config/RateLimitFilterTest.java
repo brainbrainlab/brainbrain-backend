@@ -55,7 +55,6 @@ class RateLimitFilterTest {
         mockMvc.perform(get(COUPON_ENDPOINT))
                 .andExpect(status().isTooManyRequests())
                 .andExpect(content().string("요청 수를 초과했습니다. 잠시 후 다시 시도해주세요."));
-        ;
     }
 
     @Test
