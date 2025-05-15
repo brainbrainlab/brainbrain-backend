@@ -25,6 +25,8 @@ echo "🛑 기존 애플리케이션 종료 중"
 pkill -f 'java -jar' || true
 
 echo "🚀 새 버전 실행"
-nohup java -jar build/libs/iqtest-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+nohup java -jar \
+  --spring.config.import=env:.env \
+  build/libs/iqtest-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
 
 echo "✅ 배포 완료! 앱 로그는 app.log 확인"
