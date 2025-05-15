@@ -6,6 +6,14 @@ set -e
 echo "📂 프로젝트 폴더로 이동"
 cd ~/brainbrain-backend
 
+echo "📄 .env 파일 로딩"
+if [ -f ".env" ]; then
+  export $(grep -v '^#' .env | xargs)
+else
+  echo ".env 파일이 존재하지 않습니다."
+  exit 1
+fi
+
 echo "🔄 최신 코드 가져오기"
 git pull
 
