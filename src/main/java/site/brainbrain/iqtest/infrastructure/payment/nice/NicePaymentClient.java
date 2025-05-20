@@ -31,7 +31,7 @@ import site.brainbrain.iqtest.service.payment.dto.ApiErrorResponse;
 public class NicePaymentClient {
 
     private static final String PAYMENT_CONFIRM = "/v1/payments/%s";
-    private static final String PAYMENT_CANCEL = "v1/payments/%s/cancel";
+    private static final String PAYMENT_CANCEL = "/v1/payments/%s/cancel";
 
     private final String apiSecretKey;
     private final RestClient restClient;

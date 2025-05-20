@@ -27,13 +27,13 @@ public class NicePaymentService implements PaymentService<NicePaymentCallbackReq
         validateNiceResultCode(request.authResultCode());
         final NiceApiConfirmResponse confirmResponse = nicePaymentClient.confirm(request);
         validateNiceResultCode(confirmResponse.resultCode());
-        final NicePayment Payment = NicePayment.from(confirmResponse);
-        nicePaymentRepository.save(Payment);
+        final NicePayment payment = NicePayment.from(confirmResponse);
+        nicePaymentRepository.save(payment);
     }
 
     private void validateNiceResultCode(final String resultCode) {
         if (!resultCode.equals(SUCCESS_RESULT_CODE)) {
-            throw new PaymentClientException("결제 인증에 실패했습니다.");
+            throw new PaymentClientException("결제 인증에 실패했습니다. result code : " + resultCode);
         }
     }
 }
