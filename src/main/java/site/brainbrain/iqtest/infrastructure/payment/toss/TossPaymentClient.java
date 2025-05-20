@@ -1,10 +1,9 @@
-package site.brainbrain.iqtest.service.payment;
+package site.brainbrain.iqtest.infrastructure.payment.toss;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -12,37 +11,43 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 import site.brainbrain.iqtest.exception.PaymentClientException;
 import site.brainbrain.iqtest.exception.PaymentServerException;
-import site.brainbrain.iqtest.service.payment.dto.ApiConfirmRequest;
-import site.brainbrain.iqtest.service.payment.dto.ApiConfirmResponse;
+import site.brainbrain.iqtest.infrastructure.payment.toss.dto.TossApiConfirmRequest;
+import site.brainbrain.iqtest.infrastructure.payment.toss.dto.TossApiConfirmResponse;
+import site.brainbrain.iqtest.util.AuthGenerator;
 import site.brainbrain.iqtest.service.payment.dto.ApiErrorResponse;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
-public class PaymentClient {
+public class TossPaymentClient {
 
     public static final String PAYMENT_CONFIRM = "/v1/payments/confirm";
 
-    @Value("${payment.toss.secret}")
-    private String apiSecretKey;
-
+    private final String apiSecretKey;
     private final RestClient restClient;
-    private final AuthGenerator authGenerator;
 
-    public ApiConfirmResponse confirm(final ApiConfirmRequest apiConfirmRequest) {
-        final String encodedKey = authGenerator.encodeBase64(apiSecretKey);
+    public TossPaymentClient(@Value("${payment.toss.secret}") final String apiSecretKey,
+                             @Qualifier("tossRestClient") final RestClient restClient) {
+        this.apiSecretKey = apiSecretKey;
+        this.restClient = restClient;
+    }
+
+    public TossApiConfirmResponse confirm(final TossApiConfirmRequest apiConfirmRequest) {
         return restClient.post()
                 .uri(PAYMENT_CONFIRM)
-                .header(HttpHeaders.AUTHORIZATION, authGenerator.buildBasicAuthHeader(encodedKey))
+                .header(HttpHeaders.AUTHORIZATION, AuthGenerator.generate(apiSecretKey, ""))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(apiConfirmRequest)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError,
                         (request, response) -> handleError(response)
                 )
-                .body(ApiConfirmResponse.class);
+                .body(TossApiConfirmResponse.class);
     }
 
     private void handleError(final ClientHttpResponse response) {
