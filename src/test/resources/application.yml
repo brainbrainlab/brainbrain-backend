@@ -17,6 +17,11 @@ spring:
     password:
 
 payment:
+  nice:
+    #    테스트 url
+    base_url: https://sandbox-api.nicepay.co.kr
+    #    테스트 시크릿 키
+    secret: 6872238984cc41d0a180fc700dba3fa5
   toss:
     base_url: https://api.tosspayments.com
     secret: test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6

@@ -7,13 +7,13 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.Builder;
 
 @Configuration
-public class PaymentClientConfig {
+public class TossClientConfig {
 
     @Value("${payment.toss.base_url}")
     private String baseUrl;
 
     @Bean
-    public RestClient restClient(final Builder builder) {
+    public RestClient tossRestClient(final Builder builder) {
         return builder
                 .baseUrl(baseUrl)
                 .build();

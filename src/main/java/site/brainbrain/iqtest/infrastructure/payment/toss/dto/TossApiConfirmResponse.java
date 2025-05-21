@@ -1,8 +1,8 @@
-package site.brainbrain.iqtest.service.payment.dto;
+package site.brainbrain.iqtest.infrastructure.payment.toss.dto;
 
 import java.time.OffsetDateTime;
 
-public record ApiConfirmResponse(
+public record TossApiConfirmResponse(
         String orderId,
         String orderName,
         int amount,

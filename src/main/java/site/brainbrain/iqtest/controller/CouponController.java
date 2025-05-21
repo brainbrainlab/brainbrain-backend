@@ -16,7 +16,7 @@ public class CouponController {
     private final CouponService couponService;
 
     @GetMapping("/coupons")
-    public ResponseEntity<CouponResponse> getCouponByCode(@RequestParam final String code) {
+    public ResponseEntity<CouponResponse> getCouponByCode(@RequestParam("code") final String code) {
         final CouponResponse response = couponService.getCouponByCode(code);
         return ResponseEntity.ok(response);
     }
