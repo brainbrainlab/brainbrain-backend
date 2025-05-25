@@ -3,6 +3,7 @@ package site.brainbrain.iqtest.controller;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,8 +28,19 @@ public class PaymentController {
 //    }
 
     @PostMapping("/payments/confirm")
-    public ResponseEntity<?> confirm(@RequestParam Map<String, String> params) {
-        params.forEach((k, v) -> System.out.println(k + " = " + v));
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PaymentConfirmResponse> confirm(@RequestParam final Map<String, String> params) {
+        final NicePaymentCallbackRequest request = new NicePaymentCallbackRequest(
+                params.get("authResultCode"),
+                params.get("authResultMsg"),
+                params.get("tid"),
+                params.get("clientId"),
+                params.get("orderId"),
+                Integer.parseInt(params.get("amount")),
+                params.get("mallReserved"),
+                params.get("authToken"),
+                params.get("signature")
+        );
+        paymentService.pay(request);
+        return ResponseEntity.ok(new PaymentConfirmResponse(request.orderId()));
     }
 }
