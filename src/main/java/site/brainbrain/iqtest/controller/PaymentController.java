@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import site.brainbrain.iqtest.controller.dto.PaymentConfirmResponse;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NicePaymentCallbackRequest;
+import site.brainbrain.iqtest.service.payment.NicePaymentService;
 import site.brainbrain.iqtest.service.payment.PaymentService;
 
 @RequiredArgsConstructor
 @RestController
 public class PaymentController {
 
-    private final PaymentService<NicePaymentCallbackRequest> paymentService;
+    private final NicePaymentService paymentService;
 
     @PostMapping("/payments/confirm")
     public ResponseEntity<PaymentConfirmResponse> confirmPayment(@RequestBody final NicePaymentCallbackRequest request) {
