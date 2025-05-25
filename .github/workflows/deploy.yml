@@ -3,8 +3,6 @@ name: Deploy to EC2
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   deploy:
@@ -30,6 +28,7 @@ jobs:
           MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
           TOSS_SECRET_KEY=${{ secrets.TOSS_SECRET_KEY }}
+          NICE_SECRET_KEY=${{ secrets.NICE_SECRET_KEY }}
           LOG_BASE=${{ secrets.LOG_BASE }}
           EOF
 
