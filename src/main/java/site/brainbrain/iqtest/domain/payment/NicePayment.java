@@ -4,6 +4,8 @@ import java.time.OffsetDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.brainbrain.iqtest.domain.PurchaseOption;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiConfirmResponse;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,35 +32,38 @@ public class NicePayment {
     @Column(unique = true)
     private String orderId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PurchaseOption purchaseOption;
+
     private String resultCode;
     private String resultMsg;
     private String status;
     private OffsetDateTime paidAt;
     private String payMethod;
     private Integer amount;
-    private String goodsName;
     private String currency;
 
     @Builder
     private NicePayment(final String tid,
                         final String orderId,
+                        final PurchaseOption purchaseOption,
                         final String resultCode,
                         final String resultMsg,
                         final String status,
                         final OffsetDateTime paidAt,
                         final String payMethod,
                         final Integer amount,
-                        final String goodsName,
                         final String currency) {
         this.tid = tid;
         this.orderId = orderId;
+        this.purchaseOption = purchaseOption;
         this.resultCode = resultCode;
         this.resultMsg = resultMsg;
         this.status = status;
         this.paidAt = paidAt;
         this.payMethod = payMethod;
         this.amount = amount;
-        this.goodsName = goodsName;
         this.currency = currency;
     }
 
@@ -65,13 +71,13 @@ public class NicePayment {
         return NicePayment.builder()
                 .tid(confirmResponse.tid())
                 .orderId(confirmResponse.orderId())
+                .purchaseOption(PurchaseOption.from(confirmResponse.goodsName()))
                 .resultCode(confirmResponse.resultCode())
                 .resultMsg(confirmResponse.resultMsg())
                 .status(confirmResponse.status())
                 .paidAt(confirmResponse.paidAt())
                 .payMethod(confirmResponse.payMethod())
                 .amount(confirmResponse.amount())
-                .goodsName(confirmResponse.goodsName())
                 .currency(confirmResponse.currency())
                 .build();
     }
