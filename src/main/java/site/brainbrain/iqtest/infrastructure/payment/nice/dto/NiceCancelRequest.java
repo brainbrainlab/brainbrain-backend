@@ -12,7 +12,7 @@ public record NiceCancelRequest(String tid,
         return NiceCancelRequest.builder()
                 .tid(callbackRequest.tid())
                 .clientId(callbackRequest.clientId())
-                .orderId(callbackRequest.clientId())
+                .orderId(callbackRequest.orderId())
                 .build();
     }
 
