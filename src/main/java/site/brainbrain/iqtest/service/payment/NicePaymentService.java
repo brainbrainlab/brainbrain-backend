@@ -1,12 +1,14 @@
 package site.brainbrain.iqtest.service.payment;
 
-
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import site.brainbrain.iqtest.controller.dto.PaymentConfirmResponse;
+import site.brainbrain.iqtest.domain.PurchaseOption;
 import site.brainbrain.iqtest.domain.payment.NicePayment;
 import site.brainbrain.iqtest.exception.PaymentClientException;
 import site.brainbrain.iqtest.infrastructure.payment.nice.NicePaymentClient;
@@ -17,7 +19,7 @@ import site.brainbrain.iqtest.repository.NicePaymentRepository;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class NicePaymentService {
+public class NicePaymentService implements PaymentService {
 
     private static final String SUCCESS_RESULT_CODE = "0000";
 
@@ -25,14 +27,16 @@ public class NicePaymentService {
     private final NicePaymentRepository nicePaymentRepository;
 
     @Transactional
-    public void pay(final NicePaymentCallbackRequest request) {
-        log.info("결제 진입");
+    public PaymentConfirmResponse pay(final Map<String, String> params) {
+        final NicePaymentCallbackRequest request = NicePaymentCallbackRequest.from(params);
+
         validateNiceResultCode(request.authResultCode());
         final NiceApiConfirmResponse confirmResponse = nicePaymentClient.confirm(request);
         validateNiceResultCode(confirmResponse.resultCode());
+
         final NicePayment payment = NicePayment.from(confirmResponse);
         nicePaymentRepository.save(payment);
-        log.info("결제 성공");
+        return new PaymentConfirmResponse(payment.getOrderId());
     }
 
     private void validateNiceResultCode(final String resultCode) {
@@ -42,8 +46,8 @@ public class NicePaymentService {
     }
 
     @Transactional(readOnly = true)
-    public String findGoodsNameByOrderId(final String orderId) {
+    public PurchaseOption getPurchaseOptionByOrderId(final String orderId) {
         final NicePayment nicePayment = nicePaymentRepository.fetchByOrderId(orderId);
-        return nicePayment.getGoodsName();
+        return nicePayment.getPurchaseOption();
     }
 }

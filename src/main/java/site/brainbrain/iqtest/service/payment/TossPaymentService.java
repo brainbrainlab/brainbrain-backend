@@ -1,10 +1,14 @@
 package site.brainbrain.iqtest.service.payment;
 
-import jakarta.transaction.Transactional;
+import java.util.Map;
+
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import site.brainbrain.iqtest.controller.dto.PaymentConfirmResponse;
+import site.brainbrain.iqtest.domain.PurchaseOption;
 import site.brainbrain.iqtest.domain.payment.TossPayment;
 import site.brainbrain.iqtest.infrastructure.payment.toss.TossPaymentClient;
 import site.brainbrain.iqtest.infrastructure.payment.toss.dto.TossApiConfirmRequest;
@@ -13,16 +17,26 @@ import site.brainbrain.iqtest.repository.TossPaymentRepository;
 
 @RequiredArgsConstructor
 @Service
-public class TossPaymentService implements PaymentService<TossApiConfirmRequest> {
+public class TossPaymentService implements PaymentService {
 
     private final TossPaymentClient tossPaymentClient;
     private final TossPaymentRepository tossPaymentRepository;
 
     @Transactional
     @Override
-    public void pay(final TossApiConfirmRequest request) {
+    public PaymentConfirmResponse pay(final Map<String, String> params) {
+        final TossApiConfirmRequest request = TossApiConfirmRequest.from(params);
         final TossApiConfirmResponse confirm = tossPaymentClient.confirm(request);
-        final TossPayment payment = TossPayment.of(request.paymentKey(), confirm);
+        final PurchaseOption purchaseOption = PurchaseOption.from(params.get("purchaseOption"));
+        final TossPayment payment = TossPayment.of(request.paymentKey(), confirm, purchaseOption);
         tossPaymentRepository.save(payment);
+        return new PaymentConfirmResponse(payment.getOrderId());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public PurchaseOption getPurchaseOptionByOrderId(final String orderId) {
+        final TossPayment tossPayment = tossPaymentRepository.fetchByOrderId(orderId);
+        return tossPayment.getPurchaseOption();
     }
 }
