@@ -1,9 +1,13 @@
 package site.brainbrain.iqtest.service.payment;
 
-/**
- * @param <T> PG사별 결제 요청 DTO 타입 (토스: TossApiConfirmRequest, 나이스: NicePaymentCallbackRequest)
- */
-public interface PaymentService<T> {
+import java.util.Map;
 
-    void pay(final T request);
+import site.brainbrain.iqtest.controller.dto.PaymentConfirmResponse;
+import site.brainbrain.iqtest.domain.PurchaseOption;
+
+public interface PaymentService {
+
+    PaymentConfirmResponse pay(final Map<String, String> params);
+
+    PurchaseOption getPurchaseOptionByOrderId(final String orderId);
 }

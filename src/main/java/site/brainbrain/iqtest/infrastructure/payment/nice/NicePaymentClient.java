@@ -86,7 +86,6 @@ public class NicePaymentClient {
         log.warn("[나이스페이먼츠 API] 결제 승인 실패");
         try {
             final HttpStatusCode statusCode = response.getStatusCode();
-            System.out.println(statusCode);
             final ApiErrorResponse errorBody = parseErrorResponse(response.getBody());
             if (statusCode.is4xxClientError()) {
                 throw new PaymentClientException(errorBody.message());

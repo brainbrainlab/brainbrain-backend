@@ -2,35 +2,51 @@ package site.brainbrain.iqtest.controller;
 
 import java.io.ByteArrayOutputStream;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
 import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
+import site.brainbrain.iqtest.domain.PurchaseOption;
 import site.brainbrain.iqtest.service.CertificateService;
 import site.brainbrain.iqtest.service.EmailService;
 import site.brainbrain.iqtest.service.ScoreService;
-import site.brainbrain.iqtest.service.payment.NicePaymentService;
+import site.brainbrain.iqtest.service.payment.PaymentService;
 
 @RestController
-@RequiredArgsConstructor
 public class ResultController {
 
-    private final NicePaymentService nicePaymentService;
+    private final PaymentService paymentService;
     private final CertificateService certificateService;
     private final ScoreService scoreService;
     private final EmailService emailService;
 
+    public ResultController(@Qualifier("nicePaymentService") final PaymentService paymentService,
+                            final CertificateService certificateService,
+                            final ScoreService scoreService,
+                            final EmailService emailService) {
+        this.paymentService = paymentService;
+        this.certificateService = certificateService;
+        this.scoreService = scoreService;
+        this.emailService = emailService;
+    }
+
     @PostMapping("/results")
     public void create(@RequestBody final CreateResultRequest request) {
-        final String goodsName = nicePaymentService.findGoodsNameByOrderId(request.orderId());
+        final PurchaseOption purchaseOption = paymentService.getPurchaseOptionByOrderId(request.orderId());
         Integer score = scoreService.calculate(request);
         String name = request.userInfoRequest().name();
 
-        final ByteArrayOutputStream certificate = certificateService.generate(name, score);
-        emailService.send(request.userInfoRequest().email(), name, certificate);
+        if (containsCertificate(purchaseOption)) {
+            final ByteArrayOutputStream certificate = certificateService.generate(name, score);
+            emailService.send(request.userInfoRequest().email(), name, certificate);
+        }
+    }
+
+    private boolean containsCertificate(final PurchaseOption purchaseOption) {
+        return purchaseOption == PurchaseOption.STANDARD || purchaseOption == PurchaseOption.PREMIUM;
     }
 
     @GetMapping("/check")
