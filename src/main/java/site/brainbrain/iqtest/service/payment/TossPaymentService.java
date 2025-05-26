@@ -2,7 +2,6 @@ package site.brainbrain.iqtest.service.payment;
 
 import java.util.Map;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,5 +37,11 @@ public class TossPaymentService implements PaymentService {
     public PurchaseOption getPurchaseOptionByOrderId(final String orderId) {
         final TossPayment tossPayment = tossPaymentRepository.fetchByOrderId(orderId);
         return tossPayment.getPurchaseOption();
+    }
+
+    @Transactional
+    @Override
+    public void cancel(final String orderId) {
+        //todo 토스 pg 결제 취소 구현
     }
 }

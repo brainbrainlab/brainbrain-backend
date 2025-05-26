@@ -43,6 +43,7 @@ public class NicePayment {
     private String payMethod;
     private Integer amount;
     private String currency;
+    private String clientId;
 
     @Builder
     private NicePayment(final String tid,
@@ -54,7 +55,8 @@ public class NicePayment {
                         final OffsetDateTime paidAt,
                         final String payMethod,
                         final Integer amount,
-                        final String currency) {
+                        final String currency,
+                        final String clientId) {
         this.tid = tid;
         this.orderId = orderId;
         this.purchaseOption = purchaseOption;
@@ -65,9 +67,10 @@ public class NicePayment {
         this.payMethod = payMethod;
         this.amount = amount;
         this.currency = currency;
+        this.clientId = clientId;
     }
 
-    public static NicePayment from(final NiceApiConfirmResponse confirmResponse) {
+    public static NicePayment of(final NiceApiConfirmResponse confirmResponse, final String clientId) {
         return NicePayment.builder()
                 .tid(confirmResponse.tid())
                 .orderId(confirmResponse.orderId())
@@ -79,6 +82,7 @@ public class NicePayment {
                 .payMethod(confirmResponse.payMethod())
                 .amount(confirmResponse.amount())
                 .currency(confirmResponse.currency())
+                .clientId(clientId)
                 .build();
     }
 }
