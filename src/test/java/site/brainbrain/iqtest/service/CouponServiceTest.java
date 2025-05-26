@@ -23,7 +23,7 @@ import site.brainbrain.iqtest.exception.CouponException;
 import site.brainbrain.iqtest.repository.CouponRepository;
 
 @SpringBootTest
-public class CouponServiceTest {
+class CouponServiceTest {
 
     private static final String TEST_COUPON_CODE = "TEST_COUPON";
     private static final CouponType COUPON_TYPE = CouponType.COMMON;
@@ -37,7 +37,7 @@ public class CouponServiceTest {
     private CouponRepository couponRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         final Coupon coupon = Coupon.builder()
                 .code(TEST_COUPON_CODE)
                 .type(COUPON_TYPE)
@@ -48,7 +48,7 @@ public class CouponServiceTest {
     }
 
     @AfterEach
-    public void clean() {
+    void clean() {
         couponRepository.deleteAll();
     }
 
@@ -77,8 +77,8 @@ public class CouponServiceTest {
     @Test
     void only_one_thread_can_use_coupon_when_many_requests() throws InterruptedException {
         // given
-        final ExecutorService executor = Executors.newFixedThreadPool(3);
-        final CountDownLatch latch = new CountDownLatch(3);
+        final ExecutorService executor = Executors.newFixedThreadPool(100);
+        final CountDownLatch latch = new CountDownLatch(100);
 
         final AtomicInteger successCount = new AtomicInteger();
         final AtomicInteger failCount = new AtomicInteger();
@@ -92,14 +92,18 @@ public class CouponServiceTest {
             latch.countDown();
         };
 
-        // when
-        executor.execute(task);
-        executor.execute(task);
-        executor.execute(task);
-        latch.await();
+        try {
+            // when
+            for (int i = 0; i < 100; i++) {
+                executor.execute(task);
+            }
+            latch.await();
 
-        // then
-        assertThat(successCount.get()).isEqualTo(1);
-        assertThat(failCount.get()).isEqualTo(2);
+            // then
+            assertThat(successCount.get()).isEqualTo(1);
+            assertThat(failCount.get()).isEqualTo(99);
+        } finally {
+            executor.shutdown();
+        }
     }
 }
