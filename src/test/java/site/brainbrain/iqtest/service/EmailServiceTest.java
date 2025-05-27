@@ -26,7 +26,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 
 import site.brainbrain.iqtest.exception.BrainBrainMailException;
 
-public class EmailServiceTest {
+class EmailServiceTest {
 
     @RegisterExtension
     static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP).withPerMethodLifecycle(false);

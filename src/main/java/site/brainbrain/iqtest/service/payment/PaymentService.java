@@ -10,4 +10,6 @@ public interface PaymentService {
     PaymentConfirmResponse pay(final Map<String, String> params);
 
     PurchaseOption getPurchaseOptionByOrderId(final String orderId);
+
+    void cancel(final String orderId);
 }

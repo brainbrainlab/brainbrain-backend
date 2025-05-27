@@ -21,8 +21,9 @@ import site.brainbrain.iqtest.exception.PaymentServerException;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiCancelResponse;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiConfirmResponse;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApproveRequest;
-import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceCancelRequest;
+import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceCancelApproveRequest;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NicePaymentCallbackRequest;
+import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceCancelRequest;
 import site.brainbrain.iqtest.util.AuthGenerator;
 import site.brainbrain.iqtest.service.payment.dto.ApiErrorResponse;
 
@@ -47,7 +48,8 @@ public class NicePaymentClient {
             return approve(callbackRequest);
         } catch (final RestClientException e) {
             log.error("나이스 결제 승인 요청 중 예외 발생: {}", e.getMessage());
-            cancel(callbackRequest);
+            final NiceCancelRequest niceCancelRequest = NiceCancelRequest.from(callbackRequest);
+            cancel(niceCancelRequest);
             throw new PaymentServerException("나이스 결제 승인 요청 중 에러가 발생했습니다.");
         }
     }
@@ -64,13 +66,13 @@ public class NicePaymentClient {
                 .body(NiceApiConfirmResponse.class);
     }
 
-    private void cancel(final NicePaymentCallbackRequest callbackRequest) {
+    public void cancel(final NiceCancelRequest cancelRequest) {
         try {
             final NiceApiCancelResponse cancelResponse = restClient.post()
-                    .uri(String.format(PAYMENT_CANCEL, callbackRequest.tid()))
-                    .header(HttpHeaders.AUTHORIZATION, AuthGenerator.generate(callbackRequest.clientId(), apiSecretKey))
+                    .uri(String.format(PAYMENT_CANCEL, cancelRequest.tid()))
+                    .header(HttpHeaders.AUTHORIZATION, AuthGenerator.generate(cancelRequest.clientId(), apiSecretKey))
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body(new NiceCancelRequest("결제 승인 중 타임아웃으로 인한 취소", callbackRequest.orderId()))
+                    .body(new NiceCancelApproveRequest("결제 취소", cancelRequest.orderId()))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError,
                             (request, response) -> handleError(response))

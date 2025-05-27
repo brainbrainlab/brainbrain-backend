@@ -13,6 +13,7 @@ import site.brainbrain.iqtest.domain.payment.NicePayment;
 import site.brainbrain.iqtest.exception.PaymentClientException;
 import site.brainbrain.iqtest.infrastructure.payment.nice.NicePaymentClient;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiConfirmResponse;
+import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceCancelRequest;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NicePaymentCallbackRequest;
 import site.brainbrain.iqtest.repository.NicePaymentRepository;
 
@@ -27,6 +28,7 @@ public class NicePaymentService implements PaymentService {
     private final NicePaymentRepository nicePaymentRepository;
 
     @Transactional
+    @Override
     public PaymentConfirmResponse pay(final Map<String, String> params) {
         final NicePaymentCallbackRequest request = NicePaymentCallbackRequest.from(params);
 
@@ -34,7 +36,7 @@ public class NicePaymentService implements PaymentService {
         final NiceApiConfirmResponse confirmResponse = nicePaymentClient.confirm(request);
         validateNiceResultCode(confirmResponse.resultCode());
 
-        final NicePayment payment = NicePayment.from(confirmResponse);
+        final NicePayment payment = NicePayment.of(confirmResponse, request.clientId());
         nicePaymentRepository.save(payment);
         return new PaymentConfirmResponse(payment.getOrderId());
     }
@@ -46,8 +48,17 @@ public class NicePaymentService implements PaymentService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public PurchaseOption getPurchaseOptionByOrderId(final String orderId) {
         final NicePayment nicePayment = nicePaymentRepository.fetchByOrderId(orderId);
         return nicePayment.getPurchaseOption();
+    }
+
+    @Transactional
+    @Override
+    public void cancel(final String orderId) {
+        final NicePayment nicePayment = nicePaymentRepository.fetchByOrderId(orderId);
+        final NiceCancelRequest niceCancelRequest = NiceCancelRequest.from(nicePayment);
+        nicePaymentClient.cancel(niceCancelRequest);
     }
 }

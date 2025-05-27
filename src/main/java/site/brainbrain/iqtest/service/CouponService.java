@@ -1,5 +1,7 @@
 package site.brainbrain.iqtest.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,5 +20,11 @@ public class CouponService {
     public CouponResponse getCouponByCode(final String couponCode) {
         final Coupon coupon = couponRepository.fetchByCode(couponCode);
         return new CouponResponse(coupon.getType(), coupon.getDiscountRate(), coupon.isAvailable());
+    }
+
+    @Transactional
+    public boolean isUnavailableCoupon(final String code) {
+        final int updatedRow = couponRepository.markAsUsed(code, LocalDateTime.now());
+        return updatedRow == 0;
     }
 }
