@@ -22,11 +22,16 @@ echo "🛠️ 빌드 시작"
 
 echo "🛑 기존 애플리케이션 종료 중"
 # 현재 실행 중인 jar 프로세스 종료
-pkill -f 'java -jar' || true
+PID=$(pgrep -f 'iqtest-0.0.1-SNAPSHOT.jar')
+if [ -n "$PID" ]; then
+  echo "기존 프로세스 종료: PID=$PID"
+  kill -9 $PID
+  sleep 2
+else
+  echo "종료할 프로세스 없음"
+fi
 
 echo "🚀 새 버전 실행"
-nohup java -jar \
-  --spring.config.import=env:.env \
-  build/libs/iqtest-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+nohup java -jar build/libs/iqtest-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
 
 echo "✅ 배포 완료! 앱 로그는 app.log 확인"
