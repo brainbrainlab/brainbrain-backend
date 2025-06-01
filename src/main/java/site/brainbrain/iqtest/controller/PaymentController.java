@@ -1,8 +1,11 @@
 package site.brainbrain.iqtest.controller;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +26,8 @@ public class PaymentController {
     @PostMapping("/payments/confirm")
     public ResponseEntity<PaymentConfirmResponse> confirm(@RequestParam final Map<String, String> params) {
         final PaymentConfirmResponse response = paymentService.pay(params);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("https://brainbrain.site/"))
+                .body(response);
     }
 }
