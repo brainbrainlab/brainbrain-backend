@@ -27,7 +27,7 @@ public class PaymentController {
     public ResponseEntity<PaymentConfirmResponse> confirm(@RequestParam final Map<String, String> params) {
         final PaymentConfirmResponse response = paymentService.pay(params);
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("https://brainbrain.site/"))
+                .location(URI.create("http://localhost:3000/"))
                 .body(response);
     }
 }
