@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import site.brainbrain.iqtest.exception.PaymentException;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class NicePaymentValidatorTest {
+class NicePaymentValidatorTest {
 
     @ParameterizedTest
     @CsvSource({"0001", "1000", "500"})

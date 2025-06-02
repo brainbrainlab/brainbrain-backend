@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class SignatureGeneratorTest {
+class SignatureGeneratorTest {
 
     @Test
     @DisplayName("SHA-256 해시를 생성한다")
-    public void generate_SHA256_hash() {
+    void generate_SHA256_hash() {
         // given
         final String authToken = "testAuthToken";
         final String clientId = "testClientId";
