@@ -80,13 +80,13 @@ public class NicePaymentClient {
     }
 
     private void validateResponse(final NiceApiConfirmResponse response) {
-        final String responseSignature = SignatureGenerator.generate(response.tid(),
+        final String generatedSignatureByResponse = SignatureGenerator.generate(response.tid(),
                 response.amount(),
                 response.ediDate(),
                 apiSecretKey);
 
         NicePaymentValidator.validateNiceResultCode(response.resultCode());
-        NicePaymentValidator.validateSignature(response.signature(), responseSignature);
+        NicePaymentValidator.validateSignature(response.signature(), generatedSignatureByResponse);
     }
 
     public void cancel(final NiceCancelRequest cancelRequest) {
