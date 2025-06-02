@@ -1,6 +1,5 @@
 package site.brainbrain.iqtest.infrastructure.payment.nice.util;
 
-import site.brainbrain.iqtest.exception.PaymentClientException;
 import site.brainbrain.iqtest.exception.PaymentException;
 
 public class NicePaymentValidator {
@@ -9,7 +8,7 @@ public class NicePaymentValidator {
 
     public static void validateNiceResultCode(final String resultCode) {
         if (!resultCode.equals(SUCCESS_RESULT_CODE)) {
-            throw new PaymentClientException("결제 인증에 실패했습니다. result code : " + resultCode);
+            throw new PaymentException("결제 인증에 실패했습니다. result code : " + resultCode);
         }
     }
 
