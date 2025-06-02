@@ -24,12 +24,12 @@ import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiCancelRespo
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiConfirmResponse;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApproveRequest;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceCancelApproveRequest;
-import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NicePaymentCallbackRequest;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceCancelRequest;
+import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NicePaymentCallbackRequest;
 import site.brainbrain.iqtest.infrastructure.payment.nice.util.NicePaymentValidator;
-import site.brainbrain.iqtest.util.AuthGenerator;
-import site.brainbrain.iqtest.service.payment.dto.ApiErrorResponse;
 import site.brainbrain.iqtest.infrastructure.payment.nice.util.SignatureGenerator;
+import site.brainbrain.iqtest.service.payment.dto.ApiErrorResponse;
+import site.brainbrain.iqtest.util.AuthGenerator;
 
 @Slf4j
 @Component
@@ -74,10 +74,19 @@ public class NicePaymentClient {
                 .onStatus(HttpStatusCode::isError,
                         (req, res) -> handleError(res))
                 .body(NiceApiConfirmResponse.class);
+        validateResponse(response);
+
+        return response;
+    }
+
+    private void validateResponse(final NiceApiConfirmResponse response) {
+        final String responseSignature = SignatureGenerator.generate(response.tid(),
+                response.amount(),
+                response.ediDate(),
+                apiSecretKey);
 
         NicePaymentValidator.validateNiceResultCode(response.resultCode());
-        NicePaymentValidator.validateSignature(response.signature(), signData);
-        return response;
+        NicePaymentValidator.validateSignature(response.signature(), responseSignature);
     }
 
     public void cancel(final NiceCancelRequest cancelRequest) {
