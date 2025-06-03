@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +26,7 @@ public class PaymentController {
     public ResponseEntity<PaymentConfirmResponse> confirm(@RequestParam final Map<String, String> params) {
         final PaymentConfirmResponse response = paymentService.pay(params);
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("http://localhost:3000/"))
+                .location(URI.create("https://brainbrain.site/")) // 임시 리다이렉트 경로
                 .body(response);
     }
 }
