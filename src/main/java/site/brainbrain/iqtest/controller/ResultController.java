@@ -53,7 +53,7 @@ public class ResultController {
         final String name = request.userInfoRequest().name();
 
         if (containsCertificate(purchaseOption)) {
-            final ByteArrayOutputStream certificate = certificateService.generate(name, scoreResult.totalScore());
+            final ByteArrayOutputStream certificate = certificateService.generate(name, scoreResult);
             emailService.send(request.userInfoRequest().email(), name, certificate);
         }
     }

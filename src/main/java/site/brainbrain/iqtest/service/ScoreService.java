@@ -1,5 +1,9 @@
 package site.brainbrain.iqtest.service;
 
+import static site.brainbrain.iqtest.domain.StandardDeviation.CATTELL_STANDARD_DEVIATION;
+import static site.brainbrain.iqtest.domain.StandardDeviation.STANFORD_BINET_STANDARD_DEVIATION;
+import static site.brainbrain.iqtest.domain.StandardDeviation.WECHSLER_STANDARD_DEVIATION;
+
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +13,12 @@ import org.springframework.stereotype.Service;
 
 import site.brainbrain.iqtest.domain.QuestionType;
 import site.brainbrain.iqtest.domain.ScoreResult;
+import site.brainbrain.iqtest.domain.StandardDeviation;
 
 @Service
 public class ScoreService {
+
+    private static final int QUESTIONS_SIZE = 42;
 
     private static final List<QuestionType> QUESTION_TYPE = List.of(
             QuestionType.LOGICAL_REASONING_ABILITY,
@@ -87,7 +94,7 @@ public class ScoreService {
         final Map<QuestionType, Integer> countType = new EnumMap<>(QuestionType.class);
         int correctCount = 0;
 
-        for (int i = 0; i < request.size(); i++) {
+        for (int i = 0; i < QUESTIONS_SIZE; i++) {
             final QuestionType type = QUESTION_TYPE.get(i);
             final boolean isCorrect = Objects.equals(ANSWER.get(i), request.get(i));
             if (isCorrect) {
@@ -95,12 +102,18 @@ public class ScoreService {
                 correctCount += 1;
             }
         }
-        final Integer totalScore = calculateTotalScore(correctCount);
+        final int cattellScore = calculateTotalScore(correctCount);
+        final int stanfordScore = calculateStandardDeviation(cattellScore, STANFORD_BINET_STANDARD_DEVIATION);
+        final int wechslerScore = calculateStandardDeviation(cattellScore, WECHSLER_STANDARD_DEVIATION);
 
-        return new ScoreResult(countType, totalScore);
+        return new ScoreResult(countType, wechslerScore, stanfordScore, cattellScore);
     }
 
-    private int calculateTotalScore(int totalScore) {
+    private int calculateTotalScore(final int totalScore) {
         return TOTAL_IQ_SCORE.getOrDefault(totalScore, 68);
+    }
+
+    private int calculateStandardDeviation(final int iq, StandardDeviation sd) {
+        return (iq - 100) * sd.getValue() / CATTELL_STANDARD_DEVIATION.getValue() + 100;
     }
 }
