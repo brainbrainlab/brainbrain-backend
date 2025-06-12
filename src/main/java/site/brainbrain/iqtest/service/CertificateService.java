@@ -17,12 +17,14 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import site.brainbrain.iqtest.domain.ScoreResult;
+
 @Service
 public class CertificateService {
 
     private static final Color GRAY = new Color(0x666666);
 
-    public ByteArrayOutputStream generate(String name, Integer score) {
+    public ByteArrayOutputStream generate(String name, ScoreResult score) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -30,7 +32,7 @@ public class CertificateService {
             PDDocument doc = PDDocument.load(new File(path));
             writeDateAndCertificateNo(doc);
             writeName(doc, name);
-            writeScore(doc, score);
+            writeScore(doc, score.cattell());
 
             doc.save(outputStream);
             doc.close();

@@ -5,12 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import site.brainbrain.iqtest.domain.ScoreResult;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -25,7 +28,8 @@ class CertificateServiceTest {
 
         // 파일 잘 나오는지는 두눈으로 직접 확인하기,,ㅋㅋ
         assertDoesNotThrow(() -> {
-            ByteArrayOutputStream pdf = certificateService.generate("Monkey D. Luffy", 111);
+            ByteArrayOutputStream pdf = certificateService.generate("Monkey D. Luffy",
+                    new ScoreResult(Map.of(), 145, 148, 172));
             Files.createDirectories(Path.of("src/test/resources/static"));
             Files.write(Path.of("src/test/resources/static/output.pdf"), pdf.toByteArray());
         });

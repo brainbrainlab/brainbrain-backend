@@ -1,6 +1,7 @@
 package site.brainbrain.iqtest.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,11 +47,13 @@ public class ResultController {
         }
 
         final PurchaseOption purchaseOption = paymentService.getPurchaseOptionByOrderId(request.orderId());
-        final Integer score = scoreService.calculate(request);
+        final List<Integer> answers = request.answers();
+
+        final var scoreResult = scoreService.calculate(answers);
         final String name = request.userInfoRequest().name();
 
         if (containsCertificate(purchaseOption)) {
-            final ByteArrayOutputStream certificate = certificateService.generate(name, score);
+            final ByteArrayOutputStream certificate = certificateService.generate(name, scoreResult);
             emailService.send(request.userInfoRequest().email(), name, certificate);
         }
     }
