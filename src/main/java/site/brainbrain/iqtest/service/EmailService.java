@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import site.brainbrain.iqtest.domain.ScoreResult;
 import site.brainbrain.iqtest.exception.BrainBrainMailException;
 import site.brainbrain.iqtest.util.MailAttachmentConverter;
 
@@ -24,7 +25,22 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    public void send(final String email, final String name, final ByteArrayOutputStream certificate) {
+    public void sendOnlyScore(final String email, final String name, final ScoreResult scoreResult) {
+        try {
+            final MimeMessage message = mailSender.createMimeMessage();
+            final MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(email);
+            helper.setSubject(MAIL_TITLE);
+            helper.setText(name + "님의 IQ 점수는 : " + scoreResult.cattell()); //todo: 점수만 전송할 때 텍스트만? 혹은 이미지로?
+
+            mailSender.send(message);
+        } catch (final Exception e) {
+            throw new BrainBrainMailException("이메일 전송에 실패했습니다.");
+        }
+    }
+
+    public void sendCertificate(final String email, final String name, final ByteArrayOutputStream certificate) {
         try {
             final MimeMessage message = mailSender.createMimeMessage();
             final MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
