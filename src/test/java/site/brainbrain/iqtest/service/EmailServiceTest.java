@@ -50,7 +50,7 @@ class EmailServiceTest {
         pdf.write("test certificate".getBytes(StandardCharsets.UTF_8));
 
         // when
-        emailService.send(email, name, pdf);
+        emailService.sendCertificate(email, name, pdf);
 
         // then
         assertThat(greenMail.waitForIncomingEmail(5000, 1)).isTrue();
@@ -74,7 +74,7 @@ class EmailServiceTest {
         final ByteArrayOutputStream pdf = new ByteArrayOutputStream();
 
         // when & then
-        assertThatThrownBy(() -> failEmailService.send("test@example.com", "tester", pdf))
+        assertThatThrownBy(() -> failEmailService.sendCertificate("test@example.com", "tester", pdf))
                 .isInstanceOf(BrainBrainMailException.class)
                 .hasMessageContaining("이메일 전송에 실패했습니다.");
     }

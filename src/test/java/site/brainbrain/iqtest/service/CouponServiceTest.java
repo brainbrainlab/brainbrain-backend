@@ -84,10 +84,11 @@ class CouponServiceTest {
         final AtomicInteger failCount = new AtomicInteger();
 
         final Runnable task = () -> {
-            if (couponService.isUnavailableCoupon(TEST_COUPON_CODE)) {
-                failCount.incrementAndGet();
-            } else {
+            try {
+                couponService.tryConsumeIfPresent(TEST_COUPON_CODE);
                 successCount.incrementAndGet();
+            } catch (final CouponException e) {
+                failCount.incrementAndGet();
             }
             latch.countDown();
         };
