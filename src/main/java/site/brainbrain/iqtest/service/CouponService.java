@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import site.brainbrain.iqtest.controller.dto.CouponResponse;
 import site.brainbrain.iqtest.domain.Coupon;
+import site.brainbrain.iqtest.exception.CouponException;
 import site.brainbrain.iqtest.repository.CouponRepository;
 
 @RequiredArgsConstructor
@@ -23,8 +24,13 @@ public class CouponService {
     }
 
     @Transactional
-    public boolean isUnavailableCoupon(final String code) {
-        final int updatedRow = couponRepository.markAsUsed(code, LocalDateTime.now());
-        return updatedRow == 0;
+    public void tryConsumeIfPresent(final String coupon) {
+        if (coupon == null) {
+            return;
+        }
+        final int updatedRow = couponRepository.markAsUsed(coupon, LocalDateTime.now());
+        if (updatedRow == 0) {
+            throw new CouponException("이미 사용된 쿠폰이거나 유효하지 않은 쿠폰입니다.");
+        }
     }
 }
