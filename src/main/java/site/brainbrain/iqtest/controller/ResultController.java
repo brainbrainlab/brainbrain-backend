@@ -6,29 +6,33 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import site.brainbrain.iqtest.controller.dto.CreateEmailResultRequest;
 import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
 import site.brainbrain.iqtest.domain.PurchaseOption;
-import site.brainbrain.iqtest.domain.result.ResultStrategy;
-import site.brainbrain.iqtest.domain.result.ResultStrategyFactory;
+import site.brainbrain.iqtest.service.ResultService;
 import site.brainbrain.iqtest.service.payment.PaymentService;
 
 @RestController
 public class ResultController {
 
     private final PaymentService paymentService;
-    private final ResultStrategyFactory resultStrategyFactory;
+    private final ResultService resultService;
 
-    public ResultController(@Qualifier("nicePaymentService") final PaymentService paymentService,
-                            final ResultStrategyFactory resultStrategyFactory) {
+    public ResultController(@Qualifier("nicePaymentService") final PaymentService paymentService, final ResultService resultService) {
         this.paymentService = paymentService;
-        this.resultStrategyFactory = resultStrategyFactory;
+        this.resultService = resultService;
     }
 
     @PostMapping("/results")
     public void create(@RequestBody final CreateResultRequest request) {
         final PurchaseOption purchaseOption = paymentService.getPurchaseOptionByOrderId(request.orderId());
-        final ResultStrategy strategy = resultStrategyFactory.getStrategy(purchaseOption);
-        strategy.createResult(request);
+        resultService.createResult(request, purchaseOption);
+    }
+
+    @PostMapping("/results/extra-payment")
+    public void createForExtraPayment(@RequestBody final CreateEmailResultRequest request) {
+        final PurchaseOption purchaseOption = paymentService.getPurchaseOptionByOrderId(request.orderId());
+        resultService.createOnlyEmailResult(request, purchaseOption);
     }
 
     @GetMapping("/check")

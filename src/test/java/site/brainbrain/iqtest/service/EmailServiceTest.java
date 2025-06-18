@@ -5,25 +5,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
-import com.icegreen.greenmail.junit5.GreenMailExtension;
-import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetupTest;
-
+import site.brainbrain.iqtest.domain.PurchaseOption;
+import site.brainbrain.iqtest.domain.dto.BasicEmailDto;
 import site.brainbrain.iqtest.exception.BrainBrainMailException;
 
 class EmailServiceTest {
@@ -48,9 +46,10 @@ class EmailServiceTest {
         final String name = "tester name";
         final ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         pdf.write("test certificate".getBytes(StandardCharsets.UTF_8));
+        final BasicEmailDto basicEmailDto = new BasicEmailDto(PurchaseOption.PREMIUM, 1, email, name);
 
         // when
-        emailService.sendCertificate(email, name, pdf);
+        emailService.sendCertificate(basicEmailDto, pdf);
 
         // then
         assertThat(greenMail.waitForIncomingEmail(5000, 1)).isTrue();
@@ -72,9 +71,10 @@ class EmailServiceTest {
         when(failMailSender.createMimeMessage()).thenThrow(new RuntimeException());
 
         final ByteArrayOutputStream pdf = new ByteArrayOutputStream();
+        final BasicEmailDto basicEmailDto = new BasicEmailDto(PurchaseOption.STANDARD, 1, "test@example.com", "testName");
 
         // when & then
-        assertThatThrownBy(() -> failEmailService.sendCertificate("test@example.com", "tester", pdf))
+        assertThatThrownBy(() -> failEmailService.sendCertificate(basicEmailDto, pdf))
                 .isInstanceOf(BrainBrainMailException.class)
                 .hasMessageContaining("이메일 전송에 실패했습니다.");
     }
