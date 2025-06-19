@@ -16,8 +16,8 @@ import site.brainbrain.iqtest.repository.StringListConverter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Entity
-public class User {
+@Entity(name = "user_info")
+public class UserInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +42,7 @@ public class User {
     private List<Integer> answer;
 
     @Builder
-    public User(Long id, String email, String name, String age, String gender, String country, List<Integer> answer) {
+    public UserInfo(Long id, String email, String name, String age, String gender, String country, List<Integer> answer) {
         this.id = id;
         this.email = email;
         this.name = name;

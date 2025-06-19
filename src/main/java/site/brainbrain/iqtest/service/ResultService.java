@@ -8,24 +8,24 @@ import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
 import site.brainbrain.iqtest.controller.dto.UserInfoRequest;
 import site.brainbrain.iqtest.domain.PurchaseOption;
 import site.brainbrain.iqtest.domain.ScoreResult;
-import site.brainbrain.iqtest.domain.User;
+import site.brainbrain.iqtest.domain.UserInfo;
 import site.brainbrain.iqtest.domain.dto.ResultStrategyDto;
 import site.brainbrain.iqtest.domain.result.ResultStrategy;
 import site.brainbrain.iqtest.domain.result.ResultStrategyFactory;
-import site.brainbrain.iqtest.repository.UserRepository;
+import site.brainbrain.iqtest.repository.UserInfoRepository;
 
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class ResultService {
 
-    private final UserRepository userRepository;
+    private final UserInfoRepository userInfoRepository;
     private final ScoreService scoreService;
     private final ResultStrategyFactory resultStrategyFactory;
 
     public void createResult(final CreateResultRequest request, final PurchaseOption purchaseOption) {
         final UserInfoRequest userInfo = request.userInfoRequest();
-        final User user = User.builder()
+        final UserInfo user = UserInfo.builder()
                 .email(userInfo.email())
                 .name(userInfo.name())
                 .age(userInfo.age())
@@ -33,12 +33,12 @@ public class ResultService {
                 .country(userInfo.country())
                 .answer(request.answers())
                 .build();
-        final User savedUser = userRepository.save(user);
+        final UserInfo savedUserInfo = userInfoRepository.save(user);
 
         final ScoreResult scoreResult = scoreService.calculate(request.answers());
         final ResultStrategy strategy = resultStrategyFactory.getStrategy(purchaseOption);
         final ResultStrategyDto strategyDto = new ResultStrategyDto(
-                savedUser.getId(),
+                savedUserInfo.getId(),
                 userInfo.email(),
                 userInfo.name(),
                 scoreResult
@@ -47,14 +47,14 @@ public class ResultService {
     }
 
     public void createOnlyEmailResult(final CreateEmailResultRequest request, final PurchaseOption purchaseOption) {
-        User user = userRepository.fetchById(request.userId());
+        UserInfo userInfo = userInfoRepository.fetchById(request.userId());
 
-        final ScoreResult scoreResult = scoreService.calculate(user.getAnswer());
+        final ScoreResult scoreResult = scoreService.calculate(userInfo.getAnswer());
         final ResultStrategy strategy = resultStrategyFactory.getStrategy(purchaseOption);
         final ResultStrategyDto strategyDto = new ResultStrategyDto(
-                user.getId(),
-                user.getEmail(),
-                user.getName(),
+                userInfo.getId(),
+                userInfo.getEmail(),
+                userInfo.getName(),
                 scoreResult
         );
         strategy.createResult(strategyDto);

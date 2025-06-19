@@ -22,8 +22,9 @@ public class EmailService {
     private static final String MAIL_TITLE = "BrainBrain IQ 테스트 결과";
     private static final String MAIL_BODY = "첨부된 인증서 및 보고서를 확인해주세요.";
     private static final String CERTIFICATE_FILENAME = "%s_certificate.pdf";
-    private static final String EXTRA_PAYMENT_MESSAGE = "아래의 링크에서 더 많은 분석 결과를 얻을 수 있습니다.<br/> <a href=\"%s\">여기를 클릭해 추가 분석 보기</a>";
-    private static final String EXTRA_PAYMENT_URL = "https://brainbrain.site/payment&userId=%d&purchaseOption=%s";
+    private static final String EXTRA_PAYMENT_MESSAGE = "아래의 링크에서 더 많은 분석 결과를 얻을 수 있습니다."
+            + "<ul><li><a href=\"%s\">이곳을 클릭해 추가 분석 보기</a></li></ul>";
+    private static final String EXTRA_PAYMENT_URL = "https://brainbrain.site/payment?user_id=%d&purchase_option=%s";
 
     private final JavaMailSender mailSender;
 
@@ -66,7 +67,7 @@ public class EmailService {
     private void setExtraPayment(final BasicEmailDto basicInfo, final MimeMessageHelper helper) throws MessagingException {
         if (basicInfo.purchaseOption() != PurchaseOption.PREMIUM) {
             final String extraPaymentUrl = String.format(EXTRA_PAYMENT_URL, basicInfo.userId(), basicInfo.purchaseOption());
-            helper.setText(String.format(EXTRA_PAYMENT_MESSAGE, extraPaymentUrl));
+            helper.setText(String.format(EXTRA_PAYMENT_MESSAGE, extraPaymentUrl), true);
         }
     }
 }
