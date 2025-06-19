@@ -78,4 +78,25 @@ class EmailServiceTest {
                 .isInstanceOf(BrainBrainMailException.class)
                 .hasMessageContaining("이메일 전송에 실패했습니다.");
     }
+
+    @Test
+    @DisplayName("결제 옵션이 Premium이 아닐 경우 추가 결제 url을 함께 전송한다.")
+    void send_extra_payment_url() throws IOException {
+        // given
+        final String email = "test@example.com";
+        final String name = "tester name";
+        final ByteArrayOutputStream pdf = new ByteArrayOutputStream();
+        pdf.write("test certificate".getBytes(StandardCharsets.UTF_8));
+        final BasicEmailDto basicEmailDto = new BasicEmailDto(PurchaseOption.BASIC, 1, email, name);
+
+        // when
+        emailService.sendCertificate(basicEmailDto, pdf);
+
+        // then
+        assertThat(greenMail.waitForIncomingEmail(5000, 1)).isTrue();
+
+        MimeMessage message = greenMail.getReceivedMessages()[0];
+        final String body = GreenMailUtil.getBody(message);
+        assertThat(body).contains("https://brainbrain.site/payment");
+    }
 }
