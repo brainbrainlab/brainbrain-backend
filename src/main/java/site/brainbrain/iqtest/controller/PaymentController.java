@@ -34,7 +34,7 @@ public class PaymentController {
             final PaymentConfirmResponse response = paymentService.pay(params);
             return ResponseEntity.status(HttpStatus.FOUND)
 //                    .location(URI.create("https://brainbrain.site/payments/success"))
-                    .location(URI.create("https://localhost:3000/payments/success"))
+                    .location(URI.create("http://localhost:3000/payments/success"))
                     .body(response);
         } catch (final Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // 결제 실패 테스트 임시 응답
