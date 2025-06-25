@@ -1,6 +1,7 @@
 package site.brainbrain.iqtest.service.payment;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import site.brainbrain.iqtest.controller.dto.PaymentConfirmResponse;
 import site.brainbrain.iqtest.domain.PurchaseOption;
 import site.brainbrain.iqtest.domain.payment.NicePayment;
+import site.brainbrain.iqtest.exception.PaymentFailAndCancelledException;
+import site.brainbrain.iqtest.exception.PaymentServerException;
 import site.brainbrain.iqtest.infrastructure.payment.nice.NicePaymentClient;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiConfirmResponse;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceCancelRequest;
@@ -41,9 +44,21 @@ public class NicePaymentService implements PaymentService {
         validateCallbackRequest(request);
 
         final NiceApiConfirmResponse confirmResponse = nicePaymentClient.confirm(request);
-        final NicePayment payment = NicePayment.of(confirmResponse, request.clientId());
-        nicePaymentRepository.save(payment);
-        return new PaymentConfirmResponse(payment.getOrderId());
+        try {
+            final NicePayment payment = NicePayment.of(confirmResponse, request.clientId());
+            nicePaymentRepository.save(payment);
+            return new PaymentConfirmResponse(payment.getOrderId());
+        } catch (final Exception e) {
+            final NiceApiConfirmResponse response = nicePaymentClient.checkPaymentStatus(confirmResponse.tid(), request.clientId());
+            if (Objects.equals(response.status(), "paid")) {
+                final NiceCancelRequest niceCancelRequest = NiceCancelRequest.from(request);
+                nicePaymentClient.cancel(niceCancelRequest);
+                log.error("나이스 결제 승인 이후 로직에서 예외 발생 - 결제 취소 완료: {}", e.getMessage());
+                throw new PaymentFailAndCancelledException("결제에 실패하여 승인 취소되었습니다.");
+            }
+            log.error("나이스 결제 승인 이후 로직에서 예외 발생 : {}", e.getMessage());
+            throw new PaymentServerException("결제 승인에 실패했습니다.");
+        }
     }
 
     private void validateCallbackRequest(final NicePaymentCallbackRequest request) {

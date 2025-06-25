@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import site.brainbrain.iqtest.exception.PaymentClientException;
+import site.brainbrain.iqtest.exception.PaymentException;
+import site.brainbrain.iqtest.exception.PaymentFailAndCancelledException;
 import site.brainbrain.iqtest.exception.PaymentServerException;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiCancelResponse;
 import site.brainbrain.iqtest.infrastructure.payment.nice.dto.NiceApiConfirmResponse;
@@ -37,6 +40,7 @@ public class NicePaymentClient {
 
     private static final String PAYMENT_CONFIRM = "/v1/payments/%s";
     private static final String PAYMENT_CANCEL = "/v1/payments/%s/cancel";
+    private static final String PAYMENT_CHECK = "/v1/payments/%s";
 
     private final String apiSecretKey;
     private final RestClient restClient;
@@ -50,11 +54,16 @@ public class NicePaymentClient {
     public NiceApiConfirmResponse confirm(final NicePaymentCallbackRequest callbackRequest) {
         try {
             return approve(callbackRequest);
-        } catch (final RestClientException e) {
+        } catch (final RestClientException | PaymentException e) {
+            final NiceApiConfirmResponse response = checkPaymentStatus(callbackRequest.tid(), callbackRequest.clientId());
+            if (Objects.equals(response.status(), "paid")) {
+                final NiceCancelRequest niceCancelRequest = NiceCancelRequest.from(callbackRequest);
+                cancel(niceCancelRequest);
+                log.error("나이스 결제 승인 요청 중 예외 발생 - 결제 취소 완료: {}", e.getMessage());
+                throw new PaymentFailAndCancelledException("나이스 결제 승인 요청 중 에러가 발생했습니다.");
+            }
             log.error("나이스 결제 승인 요청 중 예외 발생: {}", e.getMessage());
-            final NiceCancelRequest niceCancelRequest = NiceCancelRequest.from(callbackRequest);
-            cancel(niceCancelRequest);
-            throw new PaymentServerException("나이스 결제 승인 요청 중 에러가 발생했습니다.");
+            throw new PaymentServerException("결제 승인에 실패했습니다.");
         }
     }
 
@@ -105,6 +114,16 @@ public class NicePaymentClient {
             log.error("나이스 결제 취소 중 예외 발생: {}", e.getMessage());
             throw new PaymentServerException("결제 취소 중 에러가 발생했습니다.");
         }
+    }
+
+    public NiceApiConfirmResponse checkPaymentStatus(final String tid, final String clientId) {
+        return restClient.post()
+                .uri(String.format(PAYMENT_CHECK, tid))
+                .header(HttpHeaders.AUTHORIZATION, AuthGenerator.generate(clientId, apiSecretKey))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,
+                        (request, response) -> handleError(response))
+                .body(NiceApiConfirmResponse.class);
     }
 
     private void handleError(final ClientHttpResponse response) {
