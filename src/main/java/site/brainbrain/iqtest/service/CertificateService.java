@@ -28,8 +28,8 @@ public class CertificateService {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-            String path = new ClassPathResource("/static/certification.pdf").getFile().getAbsolutePath();
-            PDDocument doc = PDDocument.load(new File(path));
+            InputStream pdfStream = new ClassPathResource("static/certification.pdf").getInputStream();
+            PDDocument doc = PDDocument.load(pdfStream);
             writeDateAndCertificateNo(doc);
             writeName(doc, name);
             writeScore(doc, score.cattell());
