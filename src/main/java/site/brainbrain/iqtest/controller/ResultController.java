@@ -6,12 +6,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
 import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
 import site.brainbrain.iqtest.domain.PurchaseOption;
 import site.brainbrain.iqtest.domain.result.ResultStrategy;
 import site.brainbrain.iqtest.domain.result.ResultStrategyFactory;
 import site.brainbrain.iqtest.service.payment.PaymentService;
 
+@Slf4j
 @RestController
 public class ResultController {
 
@@ -26,6 +28,8 @@ public class ResultController {
 
     @PostMapping("/results")
     public void create(@RequestBody final CreateResultRequest request) {
+        log.info(request.toString());
+
         final PurchaseOption purchaseOption = paymentService.getPurchaseOptionByOrderId(request.orderId());
         final ResultStrategy strategy = resultStrategyFactory.getStrategy(purchaseOption);
         strategy.createResult(request);
