@@ -30,10 +30,13 @@ public class PaymentController {
     public ResponseEntity<PaymentConfirmResponse> confirm(@RequestParam(name = "coupon", required = false) final String coupon,
                                                           @RequestParam final Map<String, String> params) {
         couponService.tryConsumeIfPresent(coupon);
-
-        final PaymentConfirmResponse response = paymentService.pay(params);
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("https://brainbrain.site/")) // 임시 리다이렉트 경로
-                .body(response);
+        try {
+            final PaymentConfirmResponse response = paymentService.pay(params);
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("https://brainbrain.site/payments/success"))
+                    .body(response);
+        } catch (final Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // 결제 실패 테스트 임시 응답
+        }
     }
 }
