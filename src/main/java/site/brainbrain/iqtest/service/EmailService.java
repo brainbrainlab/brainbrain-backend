@@ -11,10 +11,12 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import site.brainbrain.iqtest.domain.ScoreResult;
 import site.brainbrain.iqtest.exception.BrainBrainMailException;
 import site.brainbrain.iqtest.util.MailAttachmentConverter;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class EmailService {
@@ -36,6 +38,7 @@ public class EmailService {
 
             mailSender.send(message);
         } catch (final Exception e) {
+            log.error("이메일 점수 전송 중 예외 발생 : {}", e.getMessage());
             throw new BrainBrainMailException("이메일 전송에 실패했습니다.");
         }
     }
@@ -55,6 +58,7 @@ public class EmailService {
 
             mailSender.send(message);
         } catch (final Exception e) {
+            log.error("이메일 인증서 전송 중 예외 발생 : {}", e.getMessage());
             throw new BrainBrainMailException("이메일 전송에 실패했습니다.");
         }
     }
