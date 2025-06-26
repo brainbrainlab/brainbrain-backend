@@ -13,9 +13,16 @@ public class MailConfig {
 
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final int SMTP_PORT = 587;
+
     private static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
-    private static final String MAIL_DEBUG = "mail.smtp.debug";
     private static final String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
+    private static final String MAIL_SMTP_DEBUG = "mail.smtp.debug";
+
+    private static final String MAIL_SMTP_CONNECTION_TIMEOUT = "mail.smtp.connectiontimeout";
+    private static final String MAIL_SMTP_TIMEOUT = "mail.smtp.timeout";
+    private static final String MAIL_SMTP_WRITE_TIMEOUT = "mail.smtp.writetimeout";
+    private static final String TIMEOUT_DURATION = "10000";
+
 
     @Value("${spring.mail.username}")
     private String username;
@@ -35,8 +42,10 @@ public class MailConfig {
         final Properties properties = javaMailSender.getJavaMailProperties();
         properties.put(MAIL_SMTP_AUTH, true);
         properties.put(MAIL_SMTP_STARTTLS_ENABLE, true);
-        properties.put(MAIL_DEBUG, false);
-        // Todo: 타임아웃 설정
+        properties.put(MAIL_SMTP_DEBUG, true);
+        properties.put(MAIL_SMTP_CONNECTION_TIMEOUT, TIMEOUT_DURATION);
+        properties.put(MAIL_SMTP_TIMEOUT, TIMEOUT_DURATION);
+        properties.put(MAIL_SMTP_WRITE_TIMEOUT, TIMEOUT_DURATION);
 
         javaMailSender.setJavaMailProperties(properties);
         return javaMailSender;
