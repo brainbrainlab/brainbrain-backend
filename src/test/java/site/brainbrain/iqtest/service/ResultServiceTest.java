@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import site.brainbrain.iqtest.controller.dto.CreateEmailResultRequest;
+import site.brainbrain.iqtest.controller.dto.CreateExtraPaymentRequest;
 import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
 import site.brainbrain.iqtest.controller.dto.UserInfoRequest;
 import site.brainbrain.iqtest.domain.PurchaseOption;
@@ -70,7 +70,7 @@ class ResultServiceTest {
                 .build();
         final UserInfo savedUserInfo = userInfoRepository.save(userInfo);
 
-        final CreateEmailResultRequest request = new CreateEmailResultRequest(savedUserInfo.getId(), "test orderId");
+        final CreateExtraPaymentRequest request = new CreateExtraPaymentRequest(savedUserInfo.getId(), "test orderId");
         doNothing().when(emailService)
                 .sendOnlyScore(any(), any());
 
@@ -85,7 +85,7 @@ class ResultServiceTest {
     @DisplayName("유저 id가 존재하지 않으면 예외가 발생한다.")
     void throw_exception_when_notFoundUserId() {
         // given
-        final CreateEmailResultRequest request = new CreateEmailResultRequest(1, "test orderId");
+        final CreateExtraPaymentRequest request = new CreateExtraPaymentRequest(1, "test orderId");
         doNothing().when(emailService)
                 .sendOnlyScore(any(), any());
 

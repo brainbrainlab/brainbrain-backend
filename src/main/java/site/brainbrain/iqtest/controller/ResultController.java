@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import site.brainbrain.iqtest.controller.dto.CreateEmailResultRequest;
+import site.brainbrain.iqtest.controller.dto.CreateExtraPaymentRequest;
 import site.brainbrain.iqtest.controller.dto.CreateResultRequest;
 import site.brainbrain.iqtest.domain.PurchaseOption;
 import site.brainbrain.iqtest.service.ResultService;
@@ -30,7 +30,7 @@ public class ResultController {
     }
 
     @PostMapping("/results/extra-payment")
-    public void createForExtraPayment(@RequestBody final CreateEmailResultRequest request) {
+    public void createForExtraPayment(@RequestBody final CreateExtraPaymentRequest request) {
         final PurchaseOption purchaseOption = paymentService.getPurchaseOptionByOrderId(request.orderId());
         resultService.createResultForExtraPayment(request, purchaseOption);
     }
