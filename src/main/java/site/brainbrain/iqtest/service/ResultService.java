@@ -31,7 +31,7 @@ public class ResultService {
                 .age(userInfo.age())
                 .gender(userInfo.gender())
                 .country(userInfo.country())
-                .answer(request.answers())
+                .answers(request.answers())
                 .build();
         final UserInfo savedUserInfo = userInfoRepository.save(user);
 
@@ -46,10 +46,10 @@ public class ResultService {
         strategy.createResult(strategyDto);
     }
 
-    public void createOnlyEmailResult(final CreateEmailResultRequest request, final PurchaseOption purchaseOption) {
-        UserInfo userInfo = userInfoRepository.fetchById(request.userId());
+    public void createResultForExtraPayment(final CreateEmailResultRequest request, final PurchaseOption purchaseOption) {
+        final UserInfo userInfo = userInfoRepository.fetchById(request.userId());
 
-        final ScoreResult scoreResult = scoreService.calculate(userInfo.getAnswer());
+        final ScoreResult scoreResult = scoreService.calculate(userInfo.getAnswers());
         final ResultStrategy strategy = resultStrategyFactory.getStrategy(purchaseOption);
         final ResultStrategyDto strategyDto = new ResultStrategyDto(
                 userInfo.getId(),

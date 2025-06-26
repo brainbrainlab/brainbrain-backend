@@ -32,7 +32,7 @@ public class ResultController {
     @PostMapping("/results/extra-payment")
     public void createForExtraPayment(@RequestBody final CreateEmailResultRequest request) {
         final PurchaseOption purchaseOption = paymentService.getPurchaseOptionByOrderId(request.orderId());
-        resultService.createOnlyEmailResult(request, purchaseOption);
+        resultService.createResultForExtraPayment(request, purchaseOption);
     }
 
     @GetMapping("/check")
