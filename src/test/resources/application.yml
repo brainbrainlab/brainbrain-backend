@@ -13,8 +13,9 @@ spring:
       open-in-view: false
 
   mail:
-    username:
-    password:
+    host: localhost
+    username: " "
+    password: " "
 
 payment:
   nice:
