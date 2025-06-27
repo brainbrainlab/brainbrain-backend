@@ -33,6 +33,15 @@ spring:
           writetimeout: 10000
           debug: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
 payment:
   nice:
     #    테스트 url

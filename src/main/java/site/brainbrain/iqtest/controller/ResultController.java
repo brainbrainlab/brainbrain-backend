@@ -34,9 +34,4 @@ public class ResultController {
         final ResultStrategy strategy = resultStrategyFactory.getStrategy(purchaseOption);
         strategy.createResult(request);
     }
-
-    @GetMapping("/check")
-    public String check() {
-        return "헬스 췤";
-    }
 }
