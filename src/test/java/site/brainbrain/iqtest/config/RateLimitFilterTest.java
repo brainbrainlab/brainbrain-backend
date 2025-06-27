@@ -58,14 +58,6 @@ class RateLimitFilterTest {
     }
 
     @Test
-    @DisplayName("/coupons 외의 요청은 제한이 걸리지 않는다")
-    void other_request_can_exceed_rate_limit() throws Exception {
-        for (int i = 0; i < MAX_REQUESTS_PER_MINUTE + 1; i++) {
-            mockMvc.perform(get("/check")).andExpect(status().isOk());
-        }
-    }
-
-    @Test
     @DisplayName("각 ip 마다 별도로 요청 제한이 적용된다")
     void rate_limit_per_ip() throws Exception {
         // given

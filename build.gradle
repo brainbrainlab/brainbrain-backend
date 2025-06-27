@@ -28,6 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.apache.pdfbox:pdfbox:2.0.24'
 	implementation 'mysql:mysql-connector-java:8.0.28'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	// Rate Limit
 	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
