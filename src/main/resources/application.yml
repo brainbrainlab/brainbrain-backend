@@ -16,10 +16,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
 
-#  mail:
-#    username: ${MAIL_USERNAME:tmp_username}
-#    password: ${MAIL_PASSWORD:tmp_password}
-
   mail:
     host: smtp.gmail.com
     port: 587
@@ -35,7 +31,7 @@ spring:
           connectiontimeout: 10000
           timeout: 10000
           writetimeout: 10000
-          debug: true
+          debug: false
 
 payment:
   nice:
