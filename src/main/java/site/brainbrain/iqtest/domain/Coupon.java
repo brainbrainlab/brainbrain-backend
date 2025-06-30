@@ -31,7 +31,7 @@ public class Coupon {
     private String code;
 
     @Column(nullable = false)
-    private int discountRate;
+    private double discountRate;
 
     @Column(nullable = false)
     private boolean isAvailable;
@@ -45,7 +45,7 @@ public class Coupon {
     @Builder
     public Coupon(final CouponType type,
                   final String code,
-                  final int discountRate,
+                  final double discountRate,
                   final boolean isAvailable,
                   final LocalDateTime expiredAt,
                   final LocalDateTime usedAt) {
