@@ -32,11 +32,13 @@ class RateLimitFilterTest {
 
     private static final String COUPON_ENDPOINT = "/coupons?code=TEST123";
     private static final String TEST_COUPON_CODE = "TEST123";
+    private static final double TEST_COUPON_DISCOUNT = 0.3;
 
     @BeforeEach
     void setUp() {
         final Coupon coupon = Coupon.builder()
                 .code(TEST_COUPON_CODE)
+                .discountRate(TEST_COUPON_DISCOUNT)
                 .build();
         couponRepository.save(coupon);
     }

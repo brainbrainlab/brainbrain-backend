@@ -27,7 +27,7 @@ class CouponServiceTest {
 
     private static final String TEST_COUPON_CODE = "TEST_COUPON";
     private static final CouponType COUPON_TYPE = CouponType.COMMON;
-    private static final int DISCOUNT_RATE = 10;
+    private static final double DISCOUNT_RATE = 0.3;
     private static final boolean IS_AVAILABLE = true;
 
     @Autowired
