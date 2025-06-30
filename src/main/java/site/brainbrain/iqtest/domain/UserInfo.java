@@ -54,11 +54,11 @@ public class UserInfo {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        UserInfo userInfo = (UserInfo) o;
+        final UserInfo userInfo = (UserInfo) o;
         return Objects.equals(id, userInfo.id);
     }
 
